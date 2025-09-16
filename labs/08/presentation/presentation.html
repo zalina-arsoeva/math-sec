@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ru-RU">
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Залина Арсоева">
+  <title>Целочисленная арифметика многократной точности</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link href="data:text/plain;charset=UTF-8;charset=utf-8,Not%20found%3A%20%2Freveal%2Ejs%404%2E6%2E1%2F%2Fdist%2Freset%2Ecss" rel="stylesheet">
+  <link href="data:text/plain;charset=UTF-8;charset=utf-8,Not%20found%3A%20%2Freveal%2Ejs%404%2E6%2E1%2F%2Fdist%2Freveal%2Ecss" rel="stylesheet">
+  <style>
+.reveal .sourceCode { 
+overflow: visible;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <link href="data:text/plain;charset=UTF-8;charset=utf-8,Not%20found%3A%20%2Freveal%2Ejs%404%2E6%2E1%2F%2Fdist%2Ftheme%2Fbeige%2Ecss" rel="stylesheet" id="theme">
+  
+  
+  
+  
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Целочисленная арифметика многократной точности</h1>
+  <p class="author">Залина Арсоева</p>
+  <p class="institute">Российский Университет Дружбы Народов</p>
+  <p class="date">14 декабря, 2025, Москва, Россия</p>
+</section>
+
+<section>
+<section id="цели-и-задачи" class="title-slide slide level1">
+<h1>Цели и задачи</h1>
+
+</section>
+<section id="цель-лабораторной-работы" class="slide level2">
+<h2>Цель лабораторной работы</h2>
+<p>Ознакомление с алгоритмами целочисленной арифметики многократной
+точности, а также их последующая программная реализация.</p>
+</section></section>
+<section>
+<section id="выполнение-лабораторной-работы" class="title-slide slide level1">
+<h1>Выполнение лабораторной работы</h1>
+
+</section>
+<section id="длинная-арифметика" class="slide level2">
+<h2>Длинная арифметика</h2>
+<p>Высокоточная (длинная) арифметика — это операции (базовые
+арифметические действия, элементарные математические функции и пр.) над
+числами большой разрядности (многоразрядными числами), т.е. числами,
+разрядность которых превышает длину машинного слова универсальных
+процессоров общего назначения (более 128 бит).</p>
+</section>
+<section id="сложение-неотрицательных-целых-чисел" class="slide level2">
+<h2>Сложение неотрицательных целых чисел</h2>
+<ul>
+<li>Вход. Два неотрицательных числа <span class="math inline"><em>u</em> = <em>u</em><sub>1</sub><em>u</em><sub>2</sub>…<em>u</em><sub><em>n</em></sub></span>
+и <span class="math inline"><em>v</em> = <em>v</em><sub>1</sub><em>v</em><sub>2</sub>…<em>v</em><sub><em>n</em></sub></span>;
+разрядность чисел <span class="math inline"><em>n</em></span>; основание
+системы счисления <span class="math inline"><em>b</em></span>.</li>
+<li>Выход. Сумма <span class="math inline"><em>w</em> = <em>w</em><sub>0</sub><em>w</em><sub>1</sub>…<em>w</em><sub><em>n</em></sub></span>,
+где <span class="math inline"><em>w</em><sub>0</sub></span> - цифра
+переноса, всегда равная <span class="math inline">0</span> либо <span class="math inline">1</span>.</li>
+</ul>
+<ol type="1">
+<li>Присвоить <span class="math inline"><em>j</em> = <em>n</em>, <em>k</em> = 0</span>
+(<em><span class="math inline"><em>j</em></span> идет по разрядам, <span class="math inline"><em>k</em></span> следит за переносом</em>).</li>
+<li>Присвоить <span class="math inline"><em>w</em><sub><em>j</em></sub> = (<em>u</em><sub><em>j</em></sub>+<em>v</em><sub><em>j</em></sub>+<em>k</em>) (mod  <em>b</em>)</span>,
+где <span class="math inline">$k = \left[ \frac{u_j + v_j + k}{b}
+\right]$</span>.</li>
+<li>Присвоить <span class="math inline"><em>j</em> = <em>j</em> − 1</span>. Если <span class="math inline"><em>j</em> &gt; 0</span>, то возвращаемся на шаг 2;
+если <span class="math inline"><em>j</em> = 0</span>, то присвоить <span class="math inline"><em>w</em><sub>0</sub> = <em>k</em></span> и
+результат: <span class="math inline"><em>w</em></span>.</li>
+</ol>
+</section>
+<section id="вычитание-неотрицательных-целых-чисел" class="slide level2">
+<h2>Вычитание неотрицательных целых чисел</h2>
+<ul>
+<li>Вход. Два неотрицательных числа <span class="math inline"><em>u</em> = <em>u</em><sub>1</sub><em>u</em><sub>2</sub>…<em>u</em><sub><em>n</em></sub></span>
+и <span class="math inline"><em>v</em> = <em>v</em><sub>1</sub><em>v</em><sub>2</sub>…<em>v</em><sub><em>n</em></sub></span>,
+<span class="math inline"><em>u</em> &gt; <em>v</em></span>; разрядность
+чисел <span class="math inline"><em>n</em></span>; основание системы
+счисления <span class="math inline"><em>b</em></span>.</li>
+<li>Выход. Разность <span class="math inline"><em>w</em> = <em>w</em><sub>0</sub><em>w</em><sub>1</sub>…<em>w</em><sub><em>n</em></sub> = <em>u</em> − <em>v</em></span>.</li>
+</ul>
+<ol type="1">
+<li>Присвоить <span class="math inline"><em>j</em> = <em>n</em>, <em>k</em> = 0</span>
+(<span class="math inline"><em>k</em></span> – заём из старшего
+разряда).</li>
+<li>Присвоить <span class="math inline"><em>w</em><sub><em>j</em></sub> = (<em>u</em><sub><em>j</em></sub>−<em>v</em><sub><em>j</em></sub>+<em>k</em>) (mod  <em>b</em>)</span>;
+<span class="math inline">$k = \left[ \frac{u_j - v_j + k}{b}
+\right]$</span>.</li>
+<li>Присвоить <span class="math inline"><em>j</em> = <em>j</em> − 1</span>. Если <span class="math inline"><em>j</em> &gt; 0</span>, то возвращаемся на шаг 2;
+если <span class="math inline"><em>j</em> = 0</span>, то результат:
+<span class="math inline"><em>w</em></span>.</li>
+</ol>
+</section>
+<section id="умножение-неотрицательных-целых-чисел-столбиком" class="slide level2">
+<h2>Умножение неотрицательных целых чисел столбиком</h2>
+<ul>
+<li>Вход. Числа <span class="math inline"><em>u</em> = <em>u</em><sub>1</sub><em>u</em><sub>2</sub>…<em>u</em><sub><em>n</em></sub></span>,
+<span class="math inline"><em>v</em> = <em>v</em><sub>1</sub><em>v</em><sub>2</sub>…<em>v</em><sub><em>m</em></sub></span>;
+основание системы счисления <span class="math inline"><em>b</em></span>.</li>
+<li>Выход. Произведение <span class="math inline"><em>w</em> = <em>u</em><em>v</em> = <em>w</em><sub>1</sub><em>w</em><sub>2</sub>…<em>w</em><sub><em>m</em> + <em>n</em></sub></span>.</li>
+</ul>
+<ol type="1">
+<li>Выполнить присвоения: <span class="math inline"><em>w</em><sub><em>m</em> + 1</sub> = 0, <em>w</em><sub><em>m</em> + 2</sub> = 0, …, <em>w</em><sub><em>m</em> + <em>n</em></sub> = 0, <em>j</em> = <em>m</em></span>
+(<em><span class="math inline"><em>j</em></span> перемещается по номерам
+разрядов числа <span class="math inline"><em>v</em></span> от младших к
+старшим</em>).</li>
+<li>Если <span class="math inline"><em>v</em><sub><em>j</em></sub> = 0</span>, то
+присвоить <span class="math inline"><em>w</em><sub><em>j</em></sub> = 0</span> и перейти
+на шаг 6.</li>
+</ol>
+</section>
+<section id="умножение-неотрицательных-целых-чисел-столбиком-1" class="slide level2">
+<h2>Умножение неотрицательных целых чисел столбиком</h2>
+<ol start="3" type="1">
+<li>Присвоить <span class="math inline"><em>i</em> = <em>n</em>, <em>k</em> = 0</span>
+(<em>значение <span class="math inline"><em>i</em></span> идет по
+номерам разрядов числа <span class="math inline"><em>u</em></span>,
+<span class="math inline"><em>k</em></span> отвечает за
+перенос</em>).</li>
+<li>Присвоить <span class="math inline">$t = u_i \cdot v_j + w_{i+j} +
+k, w_{i+j} = t \pmod{b}, k = \left[ \frac{t}{b} \right]$</span>.</li>
+<li>Присвоить <span class="math inline"><em>i</em> = <em>i</em> − 1</span>. Если <span class="math inline"><em>i</em> &gt; 0</span>, то возвращаемся на шаг 4,
+иначе присвоить <span class="math inline"><em>w</em><sub><em>j</em></sub> = <em>k</em></span>.</li>
+<li>Присвоить <span class="math inline"><em>j</em> = <em>j</em> − 1</span>. Если <span class="math inline"><em>j</em> &gt; 0</span>, то вернуться на шаг 2.
+Если <span class="math inline"><em>j</em> = 0</span>, то результат:
+<span class="math inline"><em>w</em></span>.</li>
+</ol>
+</section>
+<section id="быстрый-столбик" class="slide level2">
+<h2>Быстрый столбик</h2>
+<ul>
+<li>Вход. Числа <span class="math inline"><em>u</em> = <em>u</em><sub>1</sub><em>u</em><sub>2</sub>…<em>u</em><sub><em>n</em></sub></span>,
+<span class="math inline"><em>v</em> = <em>v</em><sub>1</sub><em>v</em><sub>2</sub>…<em>v</em><sub><em>m</em></sub></span>;
+основание системы счисления <span class="math inline"><em>b</em></span>.</li>
+<li>Выход. Произведение <span class="math inline"><em>w</em> = <em>u</em><em>v</em> = <em>w</em><sub>1</sub><em>w</em><sub>2</sub>…<em>w</em><sub><em>m</em> + <em>n</em></sub></span>.</li>
+</ul>
+<ol type="1">
+<li>Присвоить <span class="math inline"><em>t</em> = 0</span>.</li>
+<li>Для <span class="math inline"><em>s</em></span> от <span class="math inline">0</span> до <span class="math inline"><em>m</em> + <em>n</em> − 1</span> с шагом 1
+выполнить шаги 3 и 4.</li>
+<li>Для <span class="math inline"><em>i</em></span> от <span class="math inline">0</span> до <span class="math inline"><em>s</em></span> с шагом 1 выполнить присвоение
+<span class="math inline"><em>t</em> = <em>t</em> + <em>u</em><sub><em>n</em> − <em>i</em></sub> ⋅ <em>v</em><sub><em>m</em> − <em>s</em> + <em>i</em></sub></span>.</li>
+<li>Присвоить <span class="math inline">$w_{m + n - s} = t \pmod{b}, t =
+\left[ \frac{t}{b} \right]$</span>. Результат: <span class="math inline"><em>w</em></span>.</li>
+</ol>
+</section>
+<section id="деление-многоразрядных-целых-чисел" class="slide level2">
+<h2>Деление многоразрядных целых чисел</h2>
+<ul>
+<li>Вход. Числа <span class="math inline"><em>u</em> = <em>u</em><sub><em>n</em></sub>…<em>u</em><sub>1</sub><em>u</em><sub>0</sub></span>,
+<span class="math inline"><em>v</em> = <em>v</em><sub><em>t</em></sub>…<em>v</em><sub>1</sub><em>v</em><sub>0</sub>, <em>n</em> ≥ <em>t</em> ≥ 1, <em>v</em><sub><em>t</em></sub> ≠ 0</span>.</li>
+<li>Выход. Частное <span class="math inline"><em>q</em> = <em>q</em><sub><em>n</em> − <em>t</em></sub>…<em>q</em><sub>0</sub></span>,
+остаток <span class="math inline"><em>r</em> = <em>r</em><sub><em>t</em></sub>…<em>r</em><sub>0</sub></span>.</li>
+</ul>
+<ol type="1">
+<li>Для <span class="math inline"><em>j</em></span> от <span class="math inline">0</span> до <span class="math inline"><em>n</em> − <em>t</em></span> присвоить <span class="math inline"><em>q</em><sub><em>j</em></sub> = 0</span>.</li>
+<li>Пока <span class="math inline"><em>u</em> ≥ <em>v</em><em>b</em><sup><em>n</em> − <em>t</em></sup></span>,
+выполнять: <span class="math inline"><em>q</em><sub><em>n</em> − <em>t</em></sub> = <em>q</em><sub><em>n</em> − <em>t</em></sub> + 1, <em>u</em> = <em>u</em> − <em>v</em><em>b</em><sup><em>n</em> − <em>t</em></sup></span>.</li>
+<li>Для <span class="math inline"><em>i</em> = <em>n</em>, <em>n</em> − 1, …, <em>t</em> + 1</span>
+выполнять пункты 3.1 – 3.4: 3.1. если <span class="math inline"><em>u</em><sub><em>i</em></sub> ≥ <em>v</em><sub><em>t</em></sub></span>,
+то присвоить <span class="math inline"><em>q</em><sub><em>i</em> − <em>t</em> − 1</sub> = <em>b</em> − 1</span>,
+иначе присвоить <span class="math inline">$q_{i - t - 1} = \frac{u_i b +
+u_{i - 1}}{v_t}$</span>. 3.2. пока <span class="math inline"><em>q</em><sub><em>i</em> − <em>t</em> − 1</sub>(<em>v</em><sub><em>t</em></sub><em>b</em>+<em>v</em><sub><em>t</em> − 1</sub>) &gt; <em>u</em><sub><em>i</em></sub><em>b</em><sup>2</sup> + <em>u</em><sub><em>i</em> − 1</sub><em>b</em> + <em>u</em><sub><em>i</em> − 2</sub></span>
+выполнять <span class="math inline"><em>q</em><sub><em>i</em> − <em>t</em> − 1</sub> = <em>q</em><sub><em>i</em> − <em>t</em> − 1</sub> − 1</span>.
+3.3. присвоить <span class="math inline"><em>u</em> = <em>u</em> − <em>q</em><sub><em>i</em> − <em>t</em> − 1</sub><em>b</em><sup><em>i</em> − <em>t</em> − 1</sup><em>v</em></span>.
+3.4. если <span class="math inline"><em>u</em> &lt; 0</span>, то
+присвоить <span class="math inline"><em>u</em> = <em>u</em> + <em>v</em><em>b</em><sup><em>i</em> − <em>t</em> − 1</sup></span>,
+<span class="math inline"><em>q</em><sub><em>i</em> − <em>t</em> − 1</sub> = <em>q</em><sub><em>i</em> − <em>t</em> − 1</sub> − 1</span>.</li>
+<li><span class="math inline"><em>r</em> = <em>u</em></span>. Результат:
+<span class="math inline"><em>q</em></span> и <span class="math inline"><em>r</em></span>.</li>
+</ol>
+</section>
+<section id="пример-работы-алгоритма" class="slide level2">
+<h2>Пример работы алгоритма</h2>
+<figure>
+<img data-src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABGEAAAExCAYAAADcJr9iAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAEuMSURBVHhe7Z27juPGonb1LH6hBgb4Y7+JIWxPMJkzA51pAnXgTOjEwCRSA+NtwMEBdFIfWMZMYycHOKEDj6f+upBiVbEuvOtSawELMyKpIlksSqyvi9RKwM3wX//1X+Kvv/66Kv/nf/4nOB0RERERERHxHlR98akghLkhCGEQERERERERl5UQplAIYRARERERERGXlRCmUAhhEBEREREREZeVEKZQCGGm8CQ2P6zEal27FvvgcoiIiIiIiIiEMMXSJYQ5Pj+Kx8etOHwOz//r80FsH+Uy24N4racdd/I96n2ez8f2+z1vdyRMHcYQwiAiIiIiImJcQphCSYcwR7F7fBS7FxWyxEKYV3HYymWed24I09Ist315DcxzJYRBRERERETEe5YQplBSIczxuQpe9EiXcAjz+rI14Ysa+ZIKYXQZO3EMzfO81hDm9Pxg3XL0IDZ/+MskQpg/NuLh/N72Mvmy92K9kvO+23vTERERERER8dYkhCmU9EiYylgIY0/PhDDqlqYuo2CU1xjC1CHJ+lfzer9pBynxEGYv1ipc2YQDlG5lE8IgIiIiIiLei4QwhTImhHGClVQI02MUjPL6QpgqXPlhI071tF/XTnDiLBcLYVKjZ7JlIyIiIiIi4r1ICFMog0MYP3RJhDD6wb4dHshbe30hTB2itO0WwkirYKWxXqZr2YiIiIiIiHgvEsIUytAQxvxiUtjdMf3enDcxEiZoIoSxNLcbrcTD80m+7lo2IiIiIiIi3ouEMIUyeCSMb2QkTN9RMMpbeCZM2G4hTD0qxoQwXcvmmTCIiIiIiIj3IiFMoaRCGP3LR62RLpEwJhTCqGk9R8EorzGEUdYjWBpztxRV81u/jCT1HtIbL7uWEAYREREREfFeJIQplE4jYRb2WkMYRERERERExCkkhCkUQhhERERERETEZSWEKRRCGERERERERMRlJYQpFEIYRERERERExGUlhCkUQhhERERERETEZSWEKRRCGERERERERMRlJYQpFEIYRERERERExGUlhCkUQph78CQ2b1Zitar8bt9a5vT+Qc9bH9zpl3Uv1vU2X922DVXt04PY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" id="fig:001" alt="Работа алгоритма" />
+<figcaption aria-hidden="true">Работа алгоритма</figcaption>
+</figure>
+</section></section>
+<section>
+<section id="выводы" class="title-slide slide level1">
+<h1>Выводы</h1>
+
+</section>
+<section id="результаты-выполнения-лабораторной-работы" class="slide level2">
+<h2>Результаты выполнения лабораторной работы</h2>
+<p>Изучили алгоритмы целочисленной арифметики.</p>
+</section></section>
+    </div>
+  </div>
+
+  <script src="data:text/plain;charset=UTF-8;charset=utf-8,Not%20found%3A%20%2Freveal%2Ejs%404%2E6%2E1%2F%2Fdist%2Freveal%2Ejs"></script>
+
+  <!-- reveal.js plugins -->
+  <script src="data:text/plain;charset=UTF-8;charset=utf-8,Not%20found%3A%20%2Freveal%2Ejs%404%2E6%2E1%2F%2Fplugin%2Fnotes%2Fnotes%2Ejs"></script>
+  <script src="data:text/plain;charset=UTF-8;charset=utf-8,Not%20found%3A%20%2Freveal%2Ejs%404%2E6%2E1%2F%2Fplugin%2Fsearch%2Fsearch%2Ejs"></script>
+  <script src="data:text/plain;charset=UTF-8;charset=utf-8,Not%20found%3A%20%2Freveal%2Ejs%404%2E6%2E1%2F%2Fplugin%2Fzoom%2Fzoom%2Ejs"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: false,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: true,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'fade',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // reveal.js plugins
+        plugins: [
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    </body>
+</html>
